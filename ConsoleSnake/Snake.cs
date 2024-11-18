@@ -4,24 +4,26 @@ public class Snake
 {
     private const int MinSnakeLength = 4;
     private const int MaxSnakeLength = 6;
-    
+
     private readonly Board _board;
 
     private readonly LinkedList<Point> _body = new();
     private Point _foodPlace;
     private readonly LinkedList<Direction> _keyList = new();
+    private readonly TimeSpan _moveDelay = TimeSpan.FromMilliseconds(150);
 
     public Snake(Board board)
     {
-        _board= board;
-        for (int i = 0; i < MinSnakeLength; i++) 
-            _body.AddLast(new Point(_board.Width / 2 + i, _board.Height / 2  ));
+        _board = board;
+        for (int i = 0; i < MinSnakeLength; i++)
+            _body.AddLast(new Point(_board.Width / 2 + i, _board.Height / 2));
         // 将 snake 在 console 上 画出来
         foreach (var point in _body)
         {
             Console.SetCursorPosition(point.X, point.Y);
             Console.Write("@");
         }
+
         // 食物（食物跟蛇不能重叠在一起）
         _foodPlace = PutFoodRandmly();
 
@@ -39,7 +41,8 @@ public class Snake
             foodPoint = new Point(
                 new Random().Next(0, _board.Width),
                 new Random().Next(0, _board.Height));
-        } while (_body.Contains(foodPoint)); 
+        } while (_body.Contains(foodPoint));
+
         // draw the food on console
         Console.SetCursorPosition(foodPoint.X, foodPoint.Y);
         Console.WriteLine("X");
@@ -47,41 +50,46 @@ public class Snake
     }
 
 
-    public void RunAsync()
+    public async void RunAsync()
     {
-        /**
+        while (true)
+        {
+            /**
          * 蛇往前走的四种可能 详见：MoveResult 方法
          */
-        
-        // 预设往左边走
-        var way = Direction.Left;
-        if (_keyList.Count>0)
-        {
-             way = _keyList.First!.Value; // 一定有 First
-            _keyList.RemoveFirst();
+
+            // 预设往左边走
+            var way = Direction.Left;
+            if (_keyList.Count > 0)
+            {
+                way = _keyList.First!.Value; // 一定有 First
+                _keyList.RemoveFirst();
+            }
+
+
+            var dead = Move(way);
+            // 蛇死掉 就结束程序
+            if (dead)
+            {
+                Console.WriteLine("Game Over");
+                // 结束程序
+                Environment.Exit(0);
+            }
+
+            // 如果蛇的长度 大于等于 预期的长度。玩家赢
+            if (_body.Count >= MaxSnakeLength)
+            {
+                Console.WriteLine("You win");
+                Environment.Exit(0);
+            }
+
+            if (_keyList.Count == 0) _keyList.AddLast(way);
+            await Task.Delay(_moveDelay);
+
         }
-
-        
-        var dead = Move(way);
-        // 蛇死掉 就结束程序
-        if (dead)
-        {
-            Console.WriteLine("Game Over");
-            // 结束程序
-            Environment.Exit(0);
-        }
-
-        // 如果蛇的长度 大于等于 预期的长度。玩家赢
-        if (_body.Count >= MaxSnakeLength)
-        {
-            Console.WriteLine("You win");
-            Environment.Exit(0);
-        }
-
-
     }
 
-    private bool Move(Direction way)
+private bool Move(Direction way)
     {
         var headingPoint = way switch
         {
@@ -139,7 +147,8 @@ public class Snake
 
     private bool HitWall(Point point)
     {
-       if (point.X < 0 || point.X >= _board.Width || point.Y <0 || point.Y <= _board.Height ) return true;
+       if (point.X < 0 || point.X >= _board.Width ||
+           point.Y <0 || point.Y >= _board.Height ) return true;
        return false;
     }
 

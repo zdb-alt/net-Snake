@@ -4,7 +4,7 @@ Console.WriteLine("Hello, Snake!");
 
 var board= new Board();
 var snake= new Snake(board);
-snake.runAsync();
+snake.RunAsync();
 
 while (true)
 {

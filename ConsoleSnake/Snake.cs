@@ -1,4 +1,4 @@
-using ConsoleSnake;
+namespace ConsoleSnake;
 
 public class Snake
 {
@@ -55,8 +55,8 @@ public class Snake
         while (true)
         {
             /**
-         * 蛇往前走的四种可能 详见：MoveResult 方法
-         */
+     * 蛇往前走的四种可能 详见：MoveResult 方法
+     */
 
             // 预设往左边走
             var way = Direction.Left;
@@ -89,7 +89,7 @@ public class Snake
         }
     }
 
-private bool Move(Direction way)
+    private bool Move(Direction way)
     {
         var headingPoint = way switch
         {
@@ -106,14 +106,14 @@ private bool Move(Direction way)
     {
         
         // 撞墙了，死掉了
-       if(HitWall(point)) return true;
-       // 吃到自己了
-       if(EatSelf(point)) return true;
-       // 吃到食物了 正常走
-       if (EatFood(point)) return false;
-       // 继续走
-       MoveSafely(point);
-       return false;
+        if(HitWall(point)) return true;
+        // 吃到自己了
+        if(EatSelf(point)) return true;
+        // 吃到食物了 正常走
+        if (EatFood(point)) return false;
+        // 继续走
+        MoveSafely(point);
+        return false;
 
     }
 
@@ -147,9 +147,9 @@ private bool Move(Direction way)
 
     private bool HitWall(Point point)
     {
-       if (point.X < 0 || point.X >= _board.Width ||
-           point.Y <0 || point.Y >= _board.Height ) return true;
-       return false;
+        if (point.X < 0 || point.X >= _board.Width ||
+            point.Y <0 || point.Y >= _board.Height ) return true;
+        return false;
     }
 
 

@@ -30,7 +30,7 @@ while (true)
     {
         var key = Console.ReadKey(true);
         // 添加调试信息
-        Console.WriteLine($"按下的键: {key.Key}, KeyChar: {key.KeyChar}");
+        // Console.WriteLine($"按下的键: {key.Key}, KeyChar: {key.KeyChar}");
         
         if (IsEscapeKey(key)) 
         {

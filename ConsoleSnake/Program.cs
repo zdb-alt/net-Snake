@@ -2,8 +2,11 @@
 
 using ConsoleSnake;
 
+// 画布
 var board= new Board();
+// 蛇 
 var snake= new Snake(board);
+// 让蛇跑
 snake.RunAsync();
 
 

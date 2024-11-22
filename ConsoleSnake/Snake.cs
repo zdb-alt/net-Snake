@@ -23,11 +23,7 @@ public class Snake
         for (int i = 0; i < MinSnakeLength; i++)
             Body.AddLast(new Point(_board.Width / 2 + i, _board.Height / 2));
         // 绘制蛇身
-        foreach (var point in Body)
-        {
-            Console.SetCursorPosition(point.X, point.Y);
-            Console.Write("@");
-        }
+        foreach (var point in Body) _board.WriteAt(point);
         // 生成初始食物
         _foodPlace = PutFoodRandomly();
         // 设置初始移动方向

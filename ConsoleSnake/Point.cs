@@ -1,4 +1,7 @@
 // struct 是一种用户自定义的数据类型，可以把它理解为一个轻量级的类（class）。
+
+using System.Text;
+
 namespace ConsoleSnake;
 
 // public  record struct Point
@@ -26,11 +29,19 @@ public readonly record struct Point(int X, int Y) // 构造函数参数自动变
 {
   public override int GetHashCode()
   {
-    return HashCode.Combine(X, Y);
+    return base.GetHashCode();
   }
 
   // 改写 Equals 方法
-  public bool Equals(Point other) => X == other.X && Y == other.Y;
+  public  bool Equals(Point other)
+  {
+    if (other is var point)
+    {
+      return point.X == X && point.Y == Y;
+    }
+
+    return false;
+  }
 }; 
 
 

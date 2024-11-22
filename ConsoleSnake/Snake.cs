@@ -158,7 +158,7 @@ public class Snake
 
         return false;
     }
-
+    
     private bool EatSelf(Point point) => _body.Contains(point);
 
     private bool HitWall(Point point)

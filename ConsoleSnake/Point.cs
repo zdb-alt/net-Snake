@@ -22,4 +22,15 @@ namespace ConsoleSnake;
    record 的特点：自动生成相等性比较和其他有用的方法
    struct 的特点：值类型，性能好
  */
-public readonly record struct Point(int X, int Y); // 构造函数参数自动变成属性
+public readonly record struct Point(int X, int Y) // 构造函数参数自动变成属性
+{
+  public override int GetHashCode()
+  {
+    return HashCode.Combine(X, Y);
+  }
+
+  // 改写 Equals 方法
+  public bool Equals(Point other) => X == other.X && Y == other.Y;
+}; 
+
+

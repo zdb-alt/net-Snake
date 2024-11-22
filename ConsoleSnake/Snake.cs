@@ -9,14 +9,16 @@ public class Snake
     
     // 核心属性
     private readonly Board _board;   // 游戏板
-    private readonly LinkedList<Point> _body = new();  // 蛇的身体
+    private LinkedList<Point> _body = [];  // 蛇的身体
     private Point _foodPlace;    // 食物位置
-    private readonly LinkedList<Direction> _keyList = new();    // 按键队列
+    private readonly LinkedList<Direction> _keyList = [];    // 按键队列
     private readonly TimeSpan _moveDelay = TimeSpan.FromMilliseconds(150);    // 移动间隔
+    private readonly CancellationTokenSource _cts;
 
-    public Snake(Board board)
+    public Snake(Board board, CancellationTokenSource cts)
     {
-        _board = board;     
+        _board = board;
+        _cts = cts;
         // 初始化蛇身，放在屏幕中央
         for (int i = 0; i < MinSnakeLength; i++)
             _body.AddLast(new Point(_board.Width / 2 + i, _board.Height / 2));
@@ -56,6 +58,12 @@ public class Snake
     {
         while (true)
         {
+            if (_cts.IsCancellationRequested)
+            {
+                Console.WriteLine("Snake stop 掉了");
+                return;
+            
+            }
             // 获取移动方向
             var way = Direction.Left;
             if (_keyList.Count > 0)
@@ -69,6 +77,7 @@ public class Snake
             if (dead)
             {
                 Console.WriteLine("Game Over");
+                
                 // 结束程序
                 Environment.Exit(0);
             }
@@ -84,7 +93,15 @@ public class Snake
 
         }
     }
-    
+
+    public void initData()
+    {
+        _body = [];
+        _foodPlace = PutFoodRandmly();
+
+
+    }
+
     // 移动机制
     private bool Move(Direction way)
     {
@@ -130,7 +147,7 @@ public class Snake
 
     private bool EatFood(Point point)
     {
-        if (point.X==_foodPlace.X && point.Y == _foodPlace.Y)
+        if (point.Equals(_foodPlace))
         {
             _body.AddFirst(point);
             Console.SetCursorPosition(point.X,point.Y);

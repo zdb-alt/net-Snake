@@ -2,10 +2,16 @@
 
 using ConsoleSnake;
 
+// 去掉 console 后面的 光标
+Console.CursorVisible = false;
+// 清空画布
+Console.Clear();
+// CancellationToken
+var cts = new CancellationTokenSource();
 // 画布
 var board= new Board();
 // 蛇 
-var snake= new Snake(board);
+var snake= new Snake(board, cts);
 // 让蛇跑
 snake.RunAsync();
 
@@ -34,7 +40,11 @@ while (true)
         
         if (IsEscapeKey(key)) 
         {
-            break; // 使用 break 替代 return 更清晰
+            cts.Cancel();
+            // 等待 1 秒钟 结束掉程序
+            await Task.Delay(21000);
+            // 使用 break 替代 return 更清晰
+            break; 
         }
         
         snake.KeyPressed(key);

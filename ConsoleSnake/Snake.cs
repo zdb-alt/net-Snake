@@ -9,9 +9,9 @@ public class Snake
     
     // 核心属性
     private readonly Board _board;   // 游戏板
-    private LinkedList<Point> _body = [];  // 蛇的身体
+    private LinkedList<Point> Body { get; } = [];
     private Point _foodPlace;    // 食物位置
-    private readonly LinkedList<Direction> _keyList = [];    // 按键队列
+    private LinkedList<Direction> KeyList { get; } = [];
     private readonly TimeSpan _moveDelay = TimeSpan.FromMilliseconds(150);    // 移动间隔
     private readonly CancellationTokenSource _cts;
 
@@ -21,9 +21,9 @@ public class Snake
         _cts = cts;
         // 初始化蛇身，放在屏幕中央
         for (int i = 0; i < MinSnakeLength; i++)
-            _body.AddLast(new Point(_board.Width / 2 + i, _board.Height / 2));
+            Body.AddLast(new Point(_board.Width / 2 + i, _board.Height / 2));
         // 绘制蛇身
-        foreach (var point in _body)
+        foreach (var point in Body)
         {
             Console.SetCursorPosition(point.X, point.Y);
             Console.Write("@");
@@ -31,7 +31,7 @@ public class Snake
         // 生成初始食物
         _foodPlace = PutFoodRandmly();
         // 设置初始移动方向
-        _keyList.AddLast(Direction.Left);
+        KeyList.AddLast(Direction.Left);
 
 
     }
@@ -45,7 +45,7 @@ public class Snake
             foodPoint = new Point(
                 new Random().Next(0, _board.Width), // X坐标：0 到 游戏板宽度
                 new Random().Next(0, _board.Height)); // Y坐标：0 到 游戏板高度
-        } while (_body.Contains(foodPoint));  // 检查是否与蛇身重叠
+        } while (Body.Contains(foodPoint));  // 检查是否与蛇身重叠
 
         // 在控制台绘制食物
         Console.SetCursorPosition(foodPoint.X, foodPoint.Y);
@@ -66,10 +66,10 @@ public class Snake
             }
             // 获取移动方向
             var way = Direction.Left;
-            if (_keyList.Count > 0)
+            if (KeyList.Count > 0)
             {
-                way = _keyList.First!.Value; // 一定有 First
-                _keyList.RemoveFirst();
+                way = KeyList.First!.Value; // 一定有 First
+                KeyList.RemoveFirst();
             }
             // 移动并检查结果
             var dead = Move(way);
@@ -82,24 +82,16 @@ public class Snake
                 Environment.Exit(0);
             }
             // 检查胜利条件
-            if (_body.Count >= MaxSnakeLength)
+            if (Body.Count >= MaxSnakeLength)
             {
                 Console.WriteLine("You win");
                 Environment.Exit(0);
             }
             // 保持移动方向
-            if (_keyList.Count == 0) _keyList.AddLast(way);
+            if (KeyList.Count == 0) KeyList.AddLast(way);
             await Task.Delay(_moveDelay);
 
         }
-    }
-
-    public void initData()
-    {
-        _body = [];
-        _foodPlace = PutFoodRandmly();
-
-
     }
 
     // 移动机制
@@ -108,10 +100,10 @@ public class Snake
         // 根据方向计算下一个位置
         var headingPoint = way switch
         {
-            Direction.Up => new Point(_body.First!.Value.X, _body.First.Value.Y - 1),
-            Direction.Down => new Point(_body.First!.Value.X, _body.First.Value.Y + 1),
-            Direction.Left => new Point(_body.First!.Value.X - 1, _body.First.Value.Y),
-            Direction.Right => new Point(_body.First!.Value.X + 1, _body.First.Value.Y),
+            Direction.Up => new Point(Body.First!.Value.X, Body.First.Value.Y - 1),
+            Direction.Down => new Point(Body.First!.Value.X, Body.First.Value.Y + 1),
+            Direction.Left => new Point(Body.First!.Value.X - 1, Body.First.Value.Y),
+            Direction.Right => new Point(Body.First!.Value.X + 1, Body.First.Value.Y),
             _ => throw new ArgumentOutOfRangeException(nameof(way), way, null)
         };
         return MoveResult(headingPoint);
@@ -121,7 +113,7 @@ public class Snake
     // 移动结果处理
     private bool MoveResult(Point point)
     {
-        
+
         if(HitWall(point)) return true;  // 撞墙检测
         if(EatSelf(point)) return true;  // 自噬检测
         if (EatFood(point)) return false; // 吃到食物
@@ -134,13 +126,13 @@ public class Snake
     private void MoveSafely(Point point)
     {
         // 在头部添加新位置
-        _body.AddFirst(point);
+        Body.AddFirst(point);
         Console.SetCursorPosition(point.X,point.Y);
         Console.Write("@");
 
         // 删除尾部
-        var last = _body.Last!.Value;
-        _body.RemoveLast();
+        var last = Body.Last!.Value;
+        Body.RemoveLast();
         Console.SetCursorPosition(last.X,last.Y);
         Console.Write(" ");
     }
@@ -149,7 +141,7 @@ public class Snake
     {
         if (point.Equals(_foodPlace))
         {
-            _body.AddFirst(point);
+            Body.AddFirst(point);
             Console.SetCursorPosition(point.X,point.Y);
             Console.WriteLine("@");
             _foodPlace = PutFoodRandmly();
@@ -159,7 +151,7 @@ public class Snake
         return false;
     }
     
-    private bool EatSelf(Point point) => _body.Contains(point);
+    private bool EatSelf(Point point) => Body.Contains(point);
 
     private bool HitWall(Point point)
     {
@@ -175,16 +167,16 @@ public class Snake
         // 将按键转换为方向并加入队列
         if (key.Key == ConsoleKey.LeftArrow)
         {
-            _keyList.AddLast(Direction.Left);
+            KeyList.AddLast(Direction.Left);
         }else if (key.Key == ConsoleKey.RightArrow)
         {
-            _keyList.AddLast(Direction.Right);
+            KeyList.AddLast(Direction.Right);
         }else if (key.Key == ConsoleKey.UpArrow)
         {
-            _keyList.AddLast(Direction.Up);
+            KeyList.AddLast(Direction.Up);
         }else if (key.Key == ConsoleKey.DownArrow)
         {
-            _keyList.AddLast(Direction.Down);
+            KeyList.AddLast(Direction.Down);
         }
     }
 }

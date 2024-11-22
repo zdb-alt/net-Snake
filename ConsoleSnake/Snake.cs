@@ -29,7 +29,7 @@ public class Snake
             Console.Write("@");
         }
         // 生成初始食物
-        _foodPlace = PutFoodRandmly();
+        _foodPlace = PutFoodRandomly();
         // 设置初始移动方向
         KeyList.AddLast(Direction.Left);
 
@@ -37,7 +37,7 @@ public class Snake
     }
 
     // 食物生成逻辑
-    private Point PutFoodRandmly()
+    private Point PutFoodRandomly()
     {
         Point foodPoint;
         do
@@ -144,7 +144,7 @@ public class Snake
             Body.AddFirst(point);
             Console.SetCursorPosition(point.X,point.Y);
             Console.WriteLine("@");
-            _foodPlace = PutFoodRandmly();
+            _foodPlace = PutFoodRandomly();
             return true;
         }
 
